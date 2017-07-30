@@ -32,14 +32,32 @@ file (GLOB ReflexxesTypeII_HEADERS
 # to find ReflexxesTypeII headers
 include_directories (include)
 
-# library itself
-add_library (ReflexxesTypeII SHARED
-             ${ReflexxesTypeII_SOURCES}
-             ${ReflexxesTypeII_HEADERS})
+if (WIN32)
+  # Use static libraries on Windows, since the Reflexxes source
+  # code does not use declspec to export symbols.
 
-# install 
-install (TARGETS ReflexxesTypeII
-         LIBRARY DESTINATION lib)
+  # library itself
+  add_library (ReflexxesTypeII STATIC
+               ${ReflexxesTypeII_SOURCES}
+               ${ReflexxesTypeII_HEADERS})
+
+  # install
+  install (TARGETS ReflexxesTypeII
+           ARCHIVE DESTINATION lib)
+
+else (WIN32)
+  # All other platforms can use shared libraries.
+
+  # library itself
+  add_library (ReflexxesTypeII SHARED
+               ${ReflexxesTypeII_SOURCES}
+               ${ReflexxesTypeII_HEADERS})
+
+  # install
+  install (TARGETS ReflexxesTypeII
+           LIBRARY DESTINATION lib)
+
+endif (WIN32)
 
 install (FILES ${ReflexxesTypeII_HEADERS}
          DESTINATION "include/ReflexxesTypeII") 
